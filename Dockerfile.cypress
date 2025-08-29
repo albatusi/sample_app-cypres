@@ -1,0 +1,7 @@
+FROM cypress/included:13.0.0
+WORKDIR /e2e
+COPY . .
+
+RUN npm install --save-dev mochawesome
+
+RUN npx cypress install

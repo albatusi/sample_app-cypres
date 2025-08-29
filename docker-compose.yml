@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sample_app
+    ports:
+      - "5050:5050"
+    volumes:
+      - .:/app
+    networks:
+      - jenkinsnet
+
+  jenkins:
+    image: jenkins/jenkins:lts-jdk11
+    container_name: jenkins_server
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/home
+    user: root
+    networks:
+      - jenkinsnet
+
+  cypress:
+    build:
+      context: .
+      dockerfile: Dockerfile.cypress
+    depends_on:
+      - app
+    environment:
+      - CYPRESS_baseUrl=http://app:5050
+    entrypoint:
+      [
+        "npx",
+        "cypress",
+        "run",
+        "--reporter",
+        "mochawesome",
+        "--reporter-options",
+        "reportDir=mochawesome-report,overwrite=false,html=true,json=false",
+      ]
+    volumes:
+      - .:/e2e
+    networks:
+      - jenkinsnet
+
+volumes:
+  jenkins_data:
+
+networks:
+  jenkinsnet:
+    driver: bridge
