@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "cy:run": "cypress run --reporter mochawesome --reporter-options reportDir=mochawesome-report,overwrite=false,html=true,json=false",
+    "cy:run": "cypress run --headless --reporter mochawesome --reporter-options reportDir=mochawesome-report,overwrite=false,html=true,json=false",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
